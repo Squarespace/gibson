@@ -1,60 +1,59 @@
-allprojects {
-  apply plugin: 'java'
-  apply plugin: 'maven'
-  apply plugin: 'eclipse-wtp'
-  apply plugin: 'eclipse'
-  apply plugin: 'idea'
-
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
-
-  group = 'org.ardverk.gibson'
-  version = '0.4'
-
+buildscript {
   repositories {
     mavenCentral()
-    mavenLocal()
-    
-    maven {
-      url "http://morphia.googlecode.com/svn/mavenrepo"
-    }
+    maven { url 'https://oss.sonatype.org/content/groups/public' }
   }
-
-  configurations { 
-    all*.exclude group: 'commons-logging', module: 'commons-logging'
-    deployerJars
-  }
-  
   dependencies {
-    deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
+    classpath 'com.github.townsfolk:gradle-release:1.2'
   }
-  
-  if (System.properties['ardverk.key']) {
-    uploadArchives {
-      repositories.mavenDeployer {
-        name = 'sshDeployer' // optional
-        configuration = configurations.deployerJars
-        repository(url: "scp://mvn.ardverk.org/repository/release") {
-          authentication(
-            userName: System.properties['ardverk.username'],
-            privateKey: new File(System.properties['ardverk.key']).absolutePath,
-            passphrase: System.properties['ardverk.passphrase']
-          )
-        }
-      }
-    }
-  }
-  
-  project.ext {
-    slf4j = '1.7.6'
-    commonsio = '2.4'
-    commonscodec = '1.9'
-    commonslang = '3.1'
-    junit = '4.10'
-  }
+}
+
+apply plugin: 'release'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+group = 'com.squarespace.gibson'
+
+repositories {
+  mavenCentral()
+  mavenLocal()
+}
+
+project.ext {
+  releaseRepositoryUrl = System.getenv('RELEASE_REPOSITORY_URL')
+  snapshotRepositoryUrl = System.getenv('SNAPSHOT_REPOSITORY_URL')
 }
 
 dependencies {
-  compile project(':gibson-core')
-  compile project(':gibson-appender')
+  compile 'ch.qos.logback:logback-classic:1.1.1'
+  compile 'commons-codec:commons-codec:1.9'
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+  classifier = 'sources'
+  from sourceSets.main.allSource
+}
+
+artifacts {
+  archives sourcesJar
+}
+
+uploadArchives {
+  repositories {
+    mavenDeployer {
+      repository(url: project.releaseRepositoryUrl)
+      snapshotRepository(url: project.snapshotRepositoryUrl)
+    }
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.6'
+}
+
+createReleaseTag.dependsOn ':uploadArchives'
