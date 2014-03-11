@@ -5,15 +5,14 @@ appender with instrumentation for [Splunk](http://www.splunk.com). It is a fork/
 earlier implementation that was a stand alone system with its own Dashboard.
 
 ```
-import com.squarespace.gibson.GibsonAppender
+// Groovy Example
+import com.squarespace.gibson.GibsonConverter
 
-final PATTERN = "[signature=%X{Gibson.SIGNATURE}] %level %logger{0} - %msg%n"
-
-appender("STDOUT", GibsonAppender) {
-  appender(ConsoleAppender) {
-    encoder(PatternLayoutEncoder) {
-      pattern = "${PATTERN}"
-    }
+conversionRule("gibson", GibsonConverter)
+appender("STDOUT", ConsoleAppender) {
+  encoder(PatternLayoutEncoder) {
+    pattern = "[%thread] %gibson{signature} - %msg%n"
   }
 }
+root(DEBUG, ["STDOUT"])
 ```

@@ -17,19 +17,13 @@
 
 package com.squarespace.gibson;
 
-import org.slf4j.MDC;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 /**
  * This class contains some commonly used constants.
  */
-public class Gibson {
-
-  /**
-   * The name of the Gibson {@link MDC} signature.
-   */
-  public static final String SIGNATURE = "Gibson.SIGNATURE";
+class Gibson {
   
   /**
    * All logging events produced by Gibson itself must use this {@link Marker} to prevent recursions.
