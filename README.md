@@ -5,6 +5,13 @@
 for [Splunk](http://www.splunk.com). It is a fork/rewrite of an earlier implementation that was a 
 stand alone system with its own Dashboard.
 
+The idea of Gibson is to hash the [StackTraceElements](http://docs.oracle.com/javase/7/docs/api/java/lang/StackTraceElement.html)
+of a Java [Exception](http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html). The hash 
+excludes runtime information such as the custom error message. Exceptions with the same [Stack Trace]
+(http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html#getStackTrace()) will have the same hash 
+and are hence group and countable in Splunk. The presence or absence of a Gibson hash in the log statement is 
+also telling you if a log statement was emitted due to an Exception.
+
 ```
 // Groovy Example
 import com.squarespace.gibson.GibsonConverter
