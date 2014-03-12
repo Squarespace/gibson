@@ -16,7 +16,9 @@ appender("STDOUT", ConsoleAppender) {
   }
 }
 root(DEBUG, ["STDOUT"])
+```
 
+```
 <!-- XML Example -->
 <configuration>
   <conversionRule conversionWord="gibson" 
