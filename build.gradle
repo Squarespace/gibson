@@ -8,39 +8,46 @@ buildscript {
   }
 }
 
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.11'
+}
+
 apply plugin: 'release'
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
-group = 'com.squarespace.gibson'
-
-repositories {
-  mavenCentral()
-  mavenLocal()
-}
-
-project.ext {
-  releaseRepositoryUrl = System.getenv('RELEASE_REPOSITORY_URL')
-  snapshotRepositoryUrl = System.getenv('SNAPSHOT_REPOSITORY_URL')
-}
-
-dependencies {
-  compile 'ch.qos.logback:logback-classic:1.1.1'
-  compile 'commons-codec:commons-codec:1.9'
-}
-
-task sourcesJar(type: Jar, dependsOn: classes) {
-  classifier = 'sources'
-  from sourceSets.main.allSource
-}
-
-artifacts {
-  archives sourcesJar
+allprojects {
+  apply plugin: 'java'
+  apply plugin: 'maven'
+  apply plugin: 'eclipse'
+  apply plugin: 'idea'
+  
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+  
+  group = 'com.squarespace.gibson'
+  
+  repositories {
+    mavenCentral()
+    mavenLocal()
+  }
+  
+  project.ext {
+    releaseRepositoryUrl = System.getenv('RELEASE_REPOSITORY_URL')
+    snapshotRepositoryUrl = System.getenv('SNAPSHOT_REPOSITORY_URL')
+  }
+  
+  dependencies {
+    compile 'ch.qos.logback:logback-classic:1.1.1'
+    compile 'commons-codec:commons-codec:1.9'
+  }
+  
+  task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+  }
+  
+  artifacts {
+    archives sourcesJar
+  }
 }
 
 uploadArchives {
@@ -52,8 +59,5 @@ uploadArchives {
   }
 }
 
-task wrapper(type: Wrapper) {
-  gradleVersion = '1.6'
-}
 
 createReleaseTag.dependsOn ':uploadArchives'
