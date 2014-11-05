@@ -11,4 +11,5 @@
 bin
 build
 target
+gradlew.bat
 pom.xml
